@@ -1,0 +1,63 @@
+<h1>Transactions</h1>
+
+<div>
+  <a href="/transactions/groupbycategory"><button>Group by category</button></a>
+  <a href="/transactions?sortBy=category"><button>Sort by category</button></a>
+  <a href="/transactions?sortBy=amount"><button>Sort by amount</button></a>
+  <a href="/transactions?sortBy=description"><button>Sort by description</button></a>
+  <a href="/transactions?sortBy=date"><button>Sort by date</button></a>
+</div>
+
+<br>
+<table>
+  <thead>
+    <tr>
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;Description&nbsp;&nbsp;&nbsp;&nbsp;</th>
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;Date&nbsp;&nbsp;&nbsp;&nbsp;</th>
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;Category&nbsp;&nbsp;&nbsp;&nbsp;</th>
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;Amount&nbsp;&nbsp;&nbsp;&nbsp;</th>
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;Delete&nbsp;&nbsp;&nbsp;&nbsp;</th>
+      <th>&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% transactions.forEach(function(transaction) { %>
+      <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;<%= transaction.description %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;<%= new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(transaction.date) %>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;<%= transaction.category %>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;<%= transaction.amount %>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+          <form action="/transactions/delete/<%= transaction._id %>" method="post">
+            <input type="submit" value="Delete">
+          </form>
+        </td>
+        <td>
+          <a href="/transactions/edit/<%= transaction._id %>">Edit</a>
+        </td>
+      <tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<br>
+
+
+<h1>Add Transaction</h1>
+
+<form method="POST" action="/transactions">
+  <label for="description">Description:</label>
+  <input type="text" name="description" id="description">
+  <br>
+  <label for="amount">Amount:</label>
+  <input type="number" name="amount" id="amount">
+  <br>
+  <label for="category">Category:</label>
+  <input type="text" name="category" id="category">
+  <br>
+  <label for="date">Date:</label>
+  <input type="date" name="date" id="date">
+  <br>
+  <button type="submit">Add Transaction</button>
+</form>
+

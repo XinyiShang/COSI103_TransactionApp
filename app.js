@@ -7,9 +7,8 @@ const layouts = require("express-ejs-layouts");
 const pw_auth_router = require('./routes/pwauth')
 const toDoRouter = require('./routes/todo');
 const weatherRouter = require('./routes/weather');
-const transactionRouter = require('./routes/transaction');
+const transactionRouter = require('./routes/transactions');
 const Transaction = require('./models/Transaction');
-
 const User = require('./models/User');
 
 /* **************************************** */
@@ -24,12 +23,10 @@ mongoose.connect( mongodb_URI);
 
 const db = mongoose.connection;
 
-
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("we are connected!!!")
 });
-
 
 /* **************************************** */
 /* Enable sessions and storing session data in the database */
@@ -47,12 +44,10 @@ store.on('error', function(error) {
   console.log(error);
 });
 
-
 /* **************************************** */
 /*  middleware to make sure a user is logged in */
 /* **************************************** */
 function isLoggedIn(req, res, next) {
-  "if they are logged in, continue; otherwise redirect to /login "
   if (res.locals.loggedIn) {
     next();
   } else {
@@ -71,9 +66,6 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week                                        
   },
   store: store,
-  // Boilerplate options, see:                                                       
-  // * https://www.npmjs.com/package/express-session#resave                          
-  // * https://www.npmjs.com/package/express-session#saveuninitialized               
   resave: true,
   saveUninitialized: true
 }));
@@ -82,58 +74,35 @@ app.use(session({
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-app.use(pw_auth_router)
+app.use(pw_auth_router);
 
 app.use(layouts);
 
 app.get('/', (req,res,next) => {
   res.render('index');
-})
+});
 
 app.get('/about', 
   isLoggedIn,
   (req,res,next) => {
     res.render('about');
   }
-)
-
-
-app.post('/transactions', async (req, res) => {
-  try {
-    const transaction = new Transaction(req.body);
-    await transaction.save();
-    res.status(201).send(transaction);
-  } catch (err) {
-    res.status(400).send(err);
-  }
-});
-
-// Define a route to get all transactions
-app.get('/transactions', async (req, res) => {
-  try {
-    const transactions = await Transaction.find();
-    res.status(200).send(transactions);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
+);
 
 
 app.use(toDoRouter);
-app.use(weatherRouter);
-//app.use(transactionRouter);
 app.use(transactionRouter);
+app.use(weatherRouter);
 
 
-// catch 404 and forward to error handler
+
+//catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });

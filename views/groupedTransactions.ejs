@@ -1,0 +1,17 @@
+<h1>Grouped Transactions</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Total Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% transactions.forEach(transaction => { %>
+      <tr>
+        <td><%= transaction._id %></td>
+        <td><%= transaction.totalAmount %></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
